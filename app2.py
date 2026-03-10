@@ -11,25 +11,33 @@ st.title("AI Resume Analyzer")
 uploaded_file = st.file_uploader("Upload Resume (PDF)", type="pdf")
 
 if uploaded_file:
+
     text=""
 
     with pdfplumber.open(uploaded_file) as pdf:
         for page in pdf.pages:
-            if page.extract_text():
-                text+=page.extract_text()
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text
 
-    text=text.lower()
+    st.write("Extracted Text Preview:")
+    st.write(text[:500])   # shows first 500 characters
+
+    text = text.lower()
 
     st.subheader("Detected Skills")
 
-    found=[]
+    found = []
     for skill in skills:
         if skill in text:
             found.append(skill)
 
-    st.write(found)
+    if found:
+        st.write(found)
+    else:
+        st.write("No skills detected")
 
     st.subheader("Suggested Skills")
 
-    missing=[skill for skill in skills if skill not in found]
+    missing = [skill for skill in skills if skill not in found]
     st.write(missing)
