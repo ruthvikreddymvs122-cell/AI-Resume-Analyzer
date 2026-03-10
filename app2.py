@@ -1,38 +1,34 @@
 import streamlit as st
 import pdfplumber
 
-st.title("🧠 AI Resume Analyzer")
+st.title("AI Resume Analyzer")
 
-skills = [
-"python","java","machine learning","data science",
-"sql","html","css","javascript","artificial intelligence"
-]
+skills = ["python","java","machine learning","data science","sql","html","css","javascript"]
 
-uploaded_file = st.file_uploader("Upload your Resume (PDF)", type=["pdf"])
+uploaded_file = st.file_uploader("Upload Resume (PDF)", type="pdf")
 
 if uploaded_file is not None:
+    st.write("File uploaded successfully!")
 
     text = ""
 
     with pdfplumber.open(uploaded_file) as pdf:
         for page in pdf.pages:
-            if page.extract_text():
-                text += page.extract_text()
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text
 
     text = text.lower()
 
-    st.subheader("Detected Skills")
-
-    found_skills = []
+    found = []
 
     for skill in skills:
         if skill in text:
-            found_skills.append(skill)
+            found.append(skill)
 
-    st.write(found_skills)
+    st.subheader("Detected Skills")
+    st.write(found)
 
     st.subheader("Suggested Skills")
-
-    missing_skills = [skill for skill in skills if skill not in found_skills]
-
-    st.write(missing_skills)
+    missing = [skill for skill in skills if skill not in found]
+    st.write(missing)
